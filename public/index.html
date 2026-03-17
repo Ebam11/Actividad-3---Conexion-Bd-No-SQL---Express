@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tienda Online — Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/Styles.css"/>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header__brand">tienda <em>online</em></div>
+    <span class="header__status"><span class="status-dot"></span> en línea</span>
+  </header>
+
+  <main class="page">
+
+    <section class="intro">
+      <h1 class="intro__title">Panel de <em>gestión</em></h1>
+      <p class="intro__sub"></p>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><span class="stat__n" id="cnt-clientes">—</span><span class="stat__l">Clientes</span></div>
+      <div class="stat"><span class="stat__n" id="cnt-productos">—</span><span class="stat__l">Productos</span></div>
+      <div class="stat"><span class="stat__n" id="cnt-pedidos">—</span><span class="stat__l">Pedidos</span></div>
+      <div class="stat"><span class="stat__n" id="cnt-proveedores">—</span><span class="stat__l">Proveedores</span></div>
+    </div>
+
+    <div class="workspace">
+      <aside class="drawer">
+        <h2 class="drawer__title">Colecciones</h2>
+        <button class="drawer__item active" data-view="clientes">Clientes</button>
+        <button class="drawer__item" data-view="productos">Productos</button>
+        <button class="drawer__item" data-view="pedidos">Pedidos</button>
+        <button class="drawer__item" data-view="proveedores">Proveedores</button>
+      </aside>
+
+      <section>
+        <h2 class="section-title" id="view-title">Colección: clientes</h2>
+        <div id="cards"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
