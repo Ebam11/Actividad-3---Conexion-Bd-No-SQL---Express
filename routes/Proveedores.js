@@ -2,19 +2,23 @@ const express    = require('express');
 const router     = express.Router();
 const Proveedor  = require('../models/Proveedor');
 
+// Operadores habilitados para comparaciones en filtros.
 const OPERADORES_VALIDOS = new Set(['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']);
 
+// Convierte valores primitivos de query string a su tipo esperado.
 function parsearValor(valor) {
   if (valor === 'true') return true;
   if (valor === 'false') return false;
   return isNaN(valor) ? valor : Number(valor);
 }
 
+// Normaliza y valida operadores de consulta (con o sin prefijo "$".).
 function normalizarOperador(operador = '') {
   const op = operador.startsWith('$') ? operador : `$${operador}`;
   return OPERADORES_VALIDOS.has(op) ? op : null;
 }
 
+// Traduce query params en un objeto filtro para MongoDB.
 function parsearFiltro(query) {
   const filtro = {};
   for (const [clave, valor] of Object.entries(query)) {

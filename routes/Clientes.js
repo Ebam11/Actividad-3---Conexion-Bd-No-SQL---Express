@@ -2,14 +2,17 @@ const express = require('express');
 const router  = express.Router();
 const Cliente = require('../models/Cliente');
 
+// Operadores permitidos para busquedas comparativas por query string.
 const OPERADORES_VALIDOS = new Set(['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']);
 
+// Convierte tipos simples enviados por URL (booleanos y numeros).
 function parsearValor(valor) {
   if (valor === 'true') return true;
   if (valor === 'false') return false;
   return isNaN(valor) ? valor : Number(valor);
 }
 
+// Acepta "gt" o "$gt" y valida que este en la lista blanca.
 function normalizarOperador(operador = '') {
   const op = operador.startsWith('$') ? operador : `$${operador}`;
   return OPERADORES_VALIDOS.has(op) ? op : null;

@@ -10,6 +10,7 @@
 </head>
 <body>
 
+  <!-- Encabezado principal del dashboard -->
   <header class="header">
     <div class="header__brand">tienda <em>online</em></div>
     <span class="header__status"><span class="status-dot"></span> en línea</span>
@@ -17,6 +18,7 @@
 
   <main class="page">
 
+    <!-- Presentacion general del panel -->
     <section class="intro">
       <h1 class="intro__title">Panel de <em>gestión</em></h1>
       <p class="intro__sub"></p>
@@ -31,6 +33,7 @@
     </div>
 
     <div class="workspace">
+      <!-- Navegacion lateral para cambiar de coleccion -->
       <aside class="drawer">
         <h2 class="drawer__title">Colecciones</h2>
         <button class="drawer__item active" data-view="clientes">Clientes</button>
@@ -39,6 +42,7 @@
         <button class="drawer__item" data-view="proveedores">Proveedores</button>
       </aside>
 
+      <!-- Area donde se renderiza la tarjeta CRUD activa -->
       <section>
         <h2 class="section-title" id="view-title">Colección: clientes</h2>
         <div id="cards"></div>

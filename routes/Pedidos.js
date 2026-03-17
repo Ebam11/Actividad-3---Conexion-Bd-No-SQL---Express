@@ -3,19 +3,23 @@ const router  = express.Router();
 const Pedido  = require('../models/Pedidos');
 const Producto = require('../models/Productos');
 
+// Operadores permitidos para filtros comparativos.
 const OPERADORES_VALIDOS = new Set(['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']);
 
+// Convierte strings de query a tipos simples.
 function parsearValor(valor) {
   if (valor === 'true') return true;
   if (valor === 'false') return false;
   return isNaN(valor) ? valor : Number(valor);
 }
 
+// Normaliza operadores recibidos (con o sin "$") y valida lista blanca.
 function normalizarOperador(operador = '') {
   const op = operador.startsWith('$') ? operador : `$${operador}`;
   return OPERADORES_VALIDOS.has(op) ? op : null;
 }
 
+// Convierte query params en un filtro utilizable por Mongoose.
 function parsearFiltro(query) {
   const filtro = {};
   for (const [clave, valor] of Object.entries(query)) {
@@ -33,6 +37,7 @@ function parsearFiltro(query) {
 }
 
 
+// GET /api/pedidos -> lista pedidos y expande datos basicos del cliente.
 router.get('/', async (req, res) => {
   try {
     const filtro  = parsearFiltro(req.query);
@@ -44,6 +49,7 @@ router.get('/', async (req, res) => {
 });
 
 
+// GET /api/pedidos/buscar -> busqueda por campo con operador opcional.
 router.get('/buscar', async (req, res) => {
   try {
     const { campo, valor, operador } = req.query;
@@ -77,6 +83,7 @@ router.get('/buscar', async (req, res) => {
 });
 
 
+// POST /api/pedidos/consulta -> recibe un filtro libre por body.
 router.post('/consulta', async (req, res) => {
   try {
     const filtro  = req.body;
@@ -87,6 +94,7 @@ router.post('/consulta', async (req, res) => {
   }
 });
 
+// GET /api/pedidos/:id -> obtiene un pedido puntual por ID.
 router.get('/:id', async (req, res) => {
   try {
     const pedido = await Pedido.findById(req.params.id).populate('cliente');
@@ -98,6 +106,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
+// POST /api/pedidos -> valida productos, controla stock y crea el pedido.
 router.post('/', async (req, res) => {
   try {
     const { productos = [] } = req.body;
@@ -108,6 +117,7 @@ router.post('/', async (req, res) => {
 
     const itemsValidados = [];
 
+    // Valida cada item del pedido contra catalogo y stock disponible.
     for (const item of productos) {
       const nombreProducto = String(item.producto || '').trim();
       const cantidad = Number(item.cantidad);
@@ -148,6 +158,7 @@ router.post('/', async (req, res) => {
 });
 
 
+// PUT /api/pedidos/:id -> actualiza pedido por ID.
 router.put('/:id', async (req, res) => {
   try {
     const pedido = await Pedido.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -158,7 +169,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE 
+// DELETE /api/pedidos/:id -> elimina pedido por ID.
 router.delete('/:id', async (req, res) => {
   try {
     const pedido = await Pedido.findByIdAndDelete(req.params.id);
@@ -169,4 +180,5 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Exporta el router de pedidos para montarlo en /api/pedidos.
 module.exports = router;

@@ -2,19 +2,23 @@ const express  = require('express');
 const router   = express.Router();
 const Producto = require('../models/Productos');
 
+// Operadores soportados para filtros por query.
 const OPERADORES_VALIDOS = new Set(['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']);
 
+// Convierte strings a booleanos/numeros cuando aplica.
 function parsearValor(valor) {
   if (valor === 'true') return true;
   if (valor === 'false') return false;
   return isNaN(valor) ? valor : Number(valor);
 }
 
+// Estandariza operador (ej: "gt" -> "$gt") y valida su uso.
 function normalizarOperador(operador = '') {
   const op = operador.startsWith('$') ? operador : `$${operador}`;
   return OPERADORES_VALIDOS.has(op) ? op : null;
 }
 
+// Interpreta query params para construir filtros dinamicos.
 function parsearFiltro(query) {
   const filtro = {};
   for (const [clave, valor] of Object.entries(query)) {

@@ -323,6 +323,7 @@ let cacheClientes = [];
 let cacheProductos = [];
 let cacheProveedores = [];
 
+// Escapa comillas para usar texto dentro de atributos HTML.
 function valorAtributoSeguro(texto) {
   return String(texto).replaceAll('"', '&quot;');
 }
@@ -429,6 +430,7 @@ function conectarAccionesFila(col, filas) {
 }
 
 async function obtenerClientes() {
+  // Reutiliza cache local para evitar peticiones repetidas.
   if (cacheClientes.length) return cacheClientes;
 
   const r = await api('GET', '/api/clientes');
@@ -440,6 +442,7 @@ async function obtenerClientes() {
 }
 
 async function obtenerProductos() {
+  // Reutiliza cache local para evitar peticiones repetidas.
   if (cacheProductos.length) return cacheProductos;
 
   const r = await api('GET', '/api/productos');
@@ -451,6 +454,7 @@ async function obtenerProductos() {
 }
 
 async function obtenerProveedores() {
+  // Reutiliza cache local para evitar peticiones repetidas.
   if (cacheProveedores.length) return cacheProveedores;
 
   const r = await api('GET', '/api/proveedores');
@@ -462,6 +466,7 @@ async function obtenerProveedores() {
 }
 
 async function poblarSelectClientesEnPedidos() {
+  // Completa el selector de clientes en el formulario de pedidos.
   const select = document.querySelector('#card-pedidos select[data-campo="clienteId"]');
   if (!select) return;
 
@@ -479,6 +484,7 @@ async function poblarSelectClientesEnPedidos() {
 }
 
 async function poblarSelectProductosEnPedidos() {
+  // Completa el selector de productos en el formulario de pedidos.
   const select = document.querySelector('#card-pedidos select[data-campo="productoNombre"]');
   if (!select) return;
 
@@ -496,6 +502,7 @@ async function poblarSelectProductosEnPedidos() {
 }
 
 async function poblarSelectProveedoresEnProductos() {
+  // Completa el selector de proveedores en el formulario de productos.
   const select = document.querySelector('#card-productos select[data-campo="proveedor"]');
   if (!select) return;
 
@@ -513,9 +520,11 @@ async function poblarSelectProveedoresEnProductos() {
 }
 
 async function prepararFormularioProductos() {
+  // Prepara selects dinamicos antes de mostrar el formulario.
   await poblarSelectProveedoresEnProductos();
 }
 
+// Calcula automaticamente el total del pedido.
 function recalcularTotalPedido() {
   const form = document.getElementById('form-pedidos');
   if (!form) return;
@@ -532,6 +541,7 @@ function recalcularTotalPedido() {
 }
 
 function conectarEventosProductoPedido() {
+  // Vincula cambios de producto/cantidad/precio al total.
   const form = document.getElementById('form-pedidos');
   if (!form) return;
 
@@ -553,6 +563,7 @@ function conectarEventosProductoPedido() {
 }
 
 async function prepararFormularioPedidos() {
+  // Carga dependencias del formulario de pedidos y valores iniciales.
   await Promise.all([
     poblarSelectClientesEnPedidos(),
     poblarSelectProductosEnPedidos(),
@@ -577,6 +588,7 @@ async function prepararFormularioPedidos() {
 }
 
 async function mostrarListaActualizada(col, fallback) {
+  // Refresca la lista despues de operaciones que modifican datos.
   const lista = await api('GET', `/api/${col}`);
   if (lista.ok) {
     mostrarEnCard(col, lista);
@@ -586,6 +598,7 @@ async function mostrarListaActualizada(col, fallback) {
 }
 
 function actualizarDrawerActivo(col) {
+  // Actualiza estado visual de la coleccion activa.
   document.querySelectorAll('.drawer__item')
     .forEach(btn => btn.classList.toggle('active', btn.dataset.view === col));
 
@@ -594,6 +607,7 @@ function actualizarDrawerActivo(col) {
 }
 
 async function mostrarVista(col) {
+  // Muestra la vista activa y consulta sus registros.
   Object.keys(COLECCIONES).forEach(c => {
     const card = document.getElementById(`card-${c}`);
     if (card) card.style.display = c === col ? 'block' : 'none';
@@ -610,7 +624,7 @@ function manejarAccion(col, accion) {
 
   card.querySelectorAll('[data-action]').forEach(b => b.classList.remove('active'));
 
-  // Toggle: si ya estaba abierto, cerrar
+  // Toggle: si ya estaba abierto, cerrar.
   if (estadoActivo[col] === accion) {
     formEl.classList.remove('open');
     formEl.innerHTML = '';
@@ -637,6 +651,7 @@ function manejarAccion(col, accion) {
 }
 
 async function ejecutar(col, accion) {
+  // Ejecuta el flujo CRUD segun la accion seleccionada.
   const vals = leerCampos(col);
   const base = `/api/${col}`;
 
@@ -649,6 +664,7 @@ async function ejecutar(col, accion) {
   }
 
   if (accion === 'add') {
+    // Crea un documento nuevo.
     const r = await api('POST', base, armarBody(col, vals));
     if (col === 'clientes' && r.ok) cacheClientes = [];
     if (col === 'productos' && r.ok) cacheProductos = [];
@@ -666,6 +682,7 @@ async function ejecutar(col, accion) {
   }
 
   if (accion === 'edit') {
+    // Actualiza un documento existente.
     if (!vals._id) return alert('Ingresa el ID del documento.');
     const body = armarBody(col, vals);
     delete body._id;
@@ -682,6 +699,7 @@ async function ejecutar(col, accion) {
   }
 
   if (accion === 'del') {
+    // Elimina un documento por ID con confirmacion.
     if (!vals._id) return alert('Ingresa el ID del documento.');
     if (!confirm(`¿Eliminar este documento de «${col}»?`)) return;
     const r = await api('DELETE', `${base}/${vals._id}`);
@@ -744,10 +762,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Carga contadores iniciales
+  // Carga contadores iniciales.
   cargarContadores();
 
-  // Vista inicial
+  // Vista inicial.
   mostrarVista('clientes');
 
 });

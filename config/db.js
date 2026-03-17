@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
+// Abre la conexion principal a MongoDB usando variables de entorno.
 const conectarDB = async () => {
   try {
+    // Permite forzar nombre de base si se define MONGODB_DB.
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       dbName: process.env.MONGODB_DB || undefined,
     });
@@ -12,4 +14,5 @@ const conectarDB = async () => {
   }
 };
 
+// Exporta la funcion para usarla desde index.js.
 module.exports = conectarDB;
